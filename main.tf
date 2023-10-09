@@ -157,3 +157,23 @@ output "example_map" {
     b = 1
   }
 }
+
+resource "azurerm_resource_group" "demo" {
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
+
+  name     = "${local.rg_name}-demo"
+  location = local.location
+
+  tags = {
+    date_created = timestamp()
+    company      = "democorp"
+  }
+}
+
+output "tags" {
+  value = azurerm_resource_group.demo.tags
+}
