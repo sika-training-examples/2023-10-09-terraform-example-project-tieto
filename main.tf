@@ -72,3 +72,22 @@ output "storage_account_main_access_key" {
   value     = azurerm_storage_account.main.primary_access_key
   sensitive = true
 }
+
+output "example_string" {
+  value = "string"
+}
+
+output "example_number" {
+  value = 53
+}
+
+output "example_list" {
+  value = ["hello", "world"]
+}
+
+output "example_map" {
+  value = {
+    a = 0
+    b = 1
+  }
+}
