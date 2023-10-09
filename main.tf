@@ -102,6 +102,26 @@ resource "azurerm_storage_container" "main3" {
   container_access_type = "private"
 }
 
+locals {
+  conditional_container_enabled = true
+}
+
+resource "azurerm_storage_container" "conditional" {
+  count = local.conditional_container_enabled ? 1 : 0
+
+  name                  = "conditional"
+  storage_account_name  = azurerm_storage_account.main.name
+  container_access_type = "private"
+}
+
+locals {
+  conditional_container_id = length(azurerm_storage_container.conditional) == 1 ? azurerm_storage_container.conditional[0].id : null
+}
+
+output "conditional_container_id" {
+  value = local.conditional_container_id
+}
+
 output "storage_account_main_name" {
   value = azurerm_storage_account.main.name
 }
