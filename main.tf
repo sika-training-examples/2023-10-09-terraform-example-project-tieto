@@ -9,6 +9,7 @@ terraform {
       version = "3.5.1"
     }
   }
+  backend "http" {}
 }
 
 variable "azurerm_client_id" {}
@@ -166,6 +167,22 @@ resource "azurerm_resource_group" "demo" {
   }
 
   name     = "${local.rg_name}-demo"
+  location = local.location
+
+  tags = {
+    date_created = timestamp()
+    company      = "democorp"
+  }
+}
+
+resource "azurerm_resource_group" "demo2" {
+  lifecycle {
+    ignore_changes = [
+      tags,
+    ]
+  }
+
+  name     = "${local.rg_name}-demo2"
   location = local.location
 
   tags = {
