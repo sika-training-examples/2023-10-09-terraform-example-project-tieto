@@ -35,9 +35,15 @@ resource "random_string" "suffix" {
   special = false
 }
 
-resource "azurerm_resource_group" "main" {
-  name     = "mycorp-eu-project-team-ondrej-${random_string.suffix.result}"
+locals {
   location = "westeurope"
+  prefix   = "mycorp-eu-project-team"
+  rg_name  = "${local.prefix}-ondrej-${random_string.suffix.result}"
+}
+
+resource "azurerm_resource_group" "main" {
+  name     = local.rg_name
+  location = local.location
 }
 
 data "azurerm_resource_group" "global" {
