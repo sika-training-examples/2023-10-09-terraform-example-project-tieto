@@ -66,6 +66,14 @@ resource "azurerm_storage_account" "global" {
   account_replication_type = "GRS"
 }
 
+resource "azurerm_storage_container" "main" {
+  count = 5
+
+  name                  = "cont${count.index}"
+  storage_account_name  = azurerm_storage_account.main.name
+  container_access_type = "private"
+}
+
 output "storage_account_main_name" {
   value = azurerm_storage_account.main.name
 }
