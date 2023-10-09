@@ -208,20 +208,33 @@ module "net" {
   location            = azurerm_resource_group.main.location
 }
 
-module "vm_foo" {
+module "vms" {
+  for_each = {
+    "foo" = {
+      size              = "Standard_B1ls"
+      public_ip_enabled = true
+    }
+    "bar" = {
+      size              = "Standard_B1ls"
+      public_ip_enabled = false
+    }
+  }
+
   source = "./modules/vm"
 
-  name                = "foo"
+  name                = each.key
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   subnet_id           = module.net.subnet_ids[0]
-  size                = "Standard_B1ls"
+  size                = each.value.size
   admin_username      = "default"
   admin_password      = "asdfasdfA1."
+  public_ip_enabled   = each.value.public_ip_enabled
 }
 
 output "vm_ips" {
   value = {
-    foo = module.vm_foo.ip
+    for name, vm in module.vms :
+    name => vm.ip != null ? vm.ip : vm.private_ip
   }
 }
