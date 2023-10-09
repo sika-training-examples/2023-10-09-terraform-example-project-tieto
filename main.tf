@@ -238,3 +238,20 @@ output "vm_ips" {
     name => vm.ip != null ? vm.ip : vm.private_ip
   }
 }
+
+module "vm_provisioner" {
+  source = "./modules/vm2"
+
+  name                = "prov"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  subnet_id           = module.net.subnet_ids[0]
+  size                = "Standard_B1ls"
+  admin_username      = "default"
+  admin_password      = "asdfasdfA1."
+  public_ip_enabled   = true
+}
+
+output "vm_provisioner_ip" {
+  value = module.vm_provisioner.ip
+}
