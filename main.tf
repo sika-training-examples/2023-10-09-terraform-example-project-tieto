@@ -265,3 +265,19 @@ module "vm_provisioner" {
 output "vm_provisioner_ip" {
   value = module.vm_provisioner.ip
 }
+
+data "cloudflare_zone" "sikademo_com" {
+  name = "sikademo.com"
+}
+
+resource "cloudflare_record" "example" {
+  zone_id = data.cloudflare_zone.sikademo_com.id
+  name    = "azure-vm-example-2023-10-09"
+  value   = module.vm_provisioner.ip
+  type    = "A"
+  ttl     = 3600
+}
+
+output "vm_provisioner_fqdn" {
+  value = cloudflare_record.example.hostname
+}
