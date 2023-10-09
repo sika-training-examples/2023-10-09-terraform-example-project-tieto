@@ -88,6 +88,20 @@ resource "azurerm_storage_container" "main2" {
   metadata              = each.value
 }
 
+
+resource "azurerm_storage_container" "main3" {
+  # for_each = { for i in range(5) : tostring(i) => null }
+  for_each = {
+    "1" = {}
+    "3" = {}
+    "4" = {}
+  }
+
+  name                  = "example${each.key}"
+  storage_account_name  = azurerm_storage_account.main.name
+  container_access_type = "private"
+}
+
 output "storage_account_main_name" {
   value = azurerm_storage_account.main.name
 }
