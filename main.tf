@@ -59,6 +59,10 @@ resource "azurerm_storage_account" "main" {
 }
 
 resource "azurerm_storage_account" "global" {
+  lifecycle {
+    prevent_destroy = false
+  }
+
   name                     = "exampleglobal${random_string.suffix.result}"
   resource_group_name      = data.azurerm_resource_group.global.name
   location                 = data.azurerm_resource_group.global.location
