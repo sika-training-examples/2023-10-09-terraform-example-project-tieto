@@ -74,6 +74,20 @@ resource "azurerm_storage_container" "main" {
   container_access_type = "private"
 }
 
+resource "azurerm_storage_container" "main2" {
+  for_each = {
+    bar = {
+      demo = "2"
+    }
+    baz = {}
+  }
+
+  name                  = "cont-${each.key}"
+  storage_account_name  = azurerm_storage_account.main.name
+  container_access_type = "private"
+  metadata              = each.value
+}
+
 output "storage_account_main_name" {
   value = azurerm_storage_account.main.name
 }
