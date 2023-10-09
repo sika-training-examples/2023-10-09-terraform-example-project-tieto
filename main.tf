@@ -37,9 +37,10 @@ resource "random_string" "suffix" {
 }
 
 locals {
-  location = "westeurope"
-  prefix   = "mycorp-eu-project-team"
-  rg_name  = "${local.prefix}-ondrej-${random_string.suffix.result}"
+  location   = "westeurope"
+  prefix     = "mycorp-eu-project-team"
+  prefix_net = replace(local.prefix, "-", "")
+  rg_name    = "${local.prefix}-ondrej-${random_string.suffix.result}"
 }
 
 resource "azurerm_resource_group" "main" {
@@ -193,4 +194,34 @@ resource "azurerm_resource_group" "demo2" {
 
 output "tags" {
   value = azurerm_resource_group.demo.tags
+}
+
+module "net" {
+  source = "./modules/net"
+
+  name          = local.prefix_net
+  address_space = ["10.250.0.0/16"]
+  subnets = {
+    subnet1 = "10.250.1.0/24"
+  }
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+}
+
+module "vm_foo" {
+  source = "./modules/vm"
+
+  name                = "foo"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  subnet_id           = module.net.subnet_ids[0]
+  size                = "Standard_B1ls"
+  admin_username      = "default"
+  admin_password      = "asdfasdfA1."
+}
+
+output "vm_ips" {
+  value = {
+    foo = module.vm_foo.ip
+  }
 }
